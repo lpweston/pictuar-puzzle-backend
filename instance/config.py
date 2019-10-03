@@ -1,7 +1,5 @@
 import os
 
-app_config = "production"
-
 class Config(object):
     """Parent configuration class."""
     DEBUG = False
