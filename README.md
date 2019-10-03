@@ -8,6 +8,13 @@ Written in python 3 and using Flask, SQLAlchemy and Postgres.
 
 ## Installing
 
+Clone and change into the directory
+
+```
+git clone https://github.com/lpweston/pictuar-puzzle-backend
+cd pictuar-puzzle-backend
+```
+
 Add a .env containing the following
 
 ```
