@@ -8,6 +8,12 @@ Written in python 3 and using Flask, SQLAlchemy and Postgres.
 
 ## Installing
 
+### Requirements
+
+Python 3
+
+### Installing
+
 Clone and change into the directory
 
 ```
@@ -23,49 +29,7 @@ export FLASK_APP="run.py"
 export SECRET="some-very-long-string-of-random-characters-CHANGE-TO-YOUR-LIKING"
 export APP_SETTINGS="development"
 export DATABASE_URL="postgresql://[PostGres_username]:[PostGres_Password]@localhost/flask_api"
+export TEST_DB="postgresql://[PostGres_username]:[PostGres_Password]@localhost/test_db"
 ```
 
 Where [PostGres_username] and [PostGres_Password] are replaced.
-
-And and /instance/config.pg, with the same replacement.
-
-```
-import os
-
-class Config(object):
-    """Parent configuration class."""
-    DEBUG = False
-    CSRF_ENABLED = True
-    SECRET = os.getenv('SECRET')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
-
-
-class DevelopmentConfig(Config):
-    """Configurations for Development."""
-    DEBUG = True
-
-
-class TestingConfig(Config):
-    """Configurations for Testing, with a separate test database."""
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://[PostGres_username]:[PostGres_Password]@localhost/flask_api"
-    DEBUG = True
-
-class StagingConfig(Config):
-    """Configurations for Staging."""
-    DEBUG = True
-
-
-class ProductionConfig(Config):
-    """Configurations for Production."""
-    DEBUG = False
-    TESTING = False
-
-
-app_config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'staging': StagingConfig,
-    'production': ProductionConfig,
-}
-```
