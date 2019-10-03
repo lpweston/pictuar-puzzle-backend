@@ -30,4 +30,4 @@ class Image(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return "<Image: {}>".format(self.name)
+        return "<Image: {}>".format(self.id)

@@ -11,6 +11,7 @@ Written in python 3 and using Flask, SQLAlchemy and Postgres.
 ### Requirements
 
 Python 3,
+Pip
 Virtualenv
 
 ### Installing
@@ -25,7 +26,7 @@ cd pictuar-puzzle-backend
 set up your virtual environment
 
 ```
-virtualenv  venv
+python3 -m venv venv
 ```
 
 Add a .env containing the following
@@ -39,13 +40,15 @@ export DATABASE_URL="postgresql://[PostGres_username]:[PostGres_Password]@localh
 export TEST_DB="postgresql://[PostGres_username]:[PostGres_Password]@localhost/test_db"
 ```
 
+Where [PostGres_username] and [PostGres_Password] are replaced.
+
 Install and set up autoenv
 
 ```
 pip install -r requirements.txt
 pip install autoenv
 echo "source `which activate.sh`" >> ~/.bashrc
-$ source ~/.bashrc
+source ~/.bashrc
 ```
 
 You should be asked to approve it the first time, but if not try typing
@@ -54,12 +57,18 @@ You should be asked to approve it the first time, but if not try typing
 source .env
 ```
 
-You're looking for it to say venv
+You're looking for it to say (venv) on the left of your file name and branch.
 
-Install required dependencies
+## Running
+
+To run the server locally:
 
 ```
-pip install -r requirements.txt
+flask run
 ```
 
-Where [PostGres_username] and [PostGres_Password] are replaced.
+To run test suite:
+
+```
+python test_server.py
+```
