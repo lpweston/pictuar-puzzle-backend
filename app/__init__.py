@@ -17,6 +17,11 @@ def create_app(config_name):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
+    @app.route('/', methods=['GET'])
+    def api():
+        endpoints=open("endpoints.json","r")
+        return endpoints.read()
+
     @app.route('/images/', methods=['POST', 'GET'])
     def images():
         if request.method == "POST":
@@ -115,5 +120,6 @@ def create_app(config_name):
             })
             response.status_code = 201
             return response
-
+            
+            
     return app
