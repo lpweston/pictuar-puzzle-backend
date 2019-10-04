@@ -1,7 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 # local import
 from instance.config import app_config
@@ -17,15 +17,14 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['CORS_HEADERS'] = 'Content-Type'
     db.init_app(app)
 
-    @app.route('/')
-    def hello():
-        return 'hello welcome to my api'
+    @app.route('/', methods=['GET'])
+    def api():
+        endpoints=open("endpoints.json","r")
+        return endpoints.read()
 
     @app.route('/images/', methods=['POST', 'GET'])
-    @cross_origin()
     def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
@@ -123,5 +122,6 @@ def create_app(config_name):
             })
             response.status_code = 201
             return response
-
+            
+            
     return app
