@@ -1,6 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+from flask_cors import CORS, cross_origin
 
 # local import
 from instance.config import app_config
@@ -12,11 +13,15 @@ db = SQLAlchemy()
 def create_app(config_name):
     from app.models import Image, PieceBeginner
     app = FlaskAPI(__name__, instance_relative_config=True)
-    print(config_name)
+    cors = CORS(app)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['CORS_HEADERS'] = 'Content-Type'
     db.init_app(app)
+
+    @app.route('/')
+    @cross_origin()
 
     @app.route('/images/', methods=['POST', 'GET'])
     def images():
