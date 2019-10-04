@@ -22,6 +22,8 @@ def create_app(config_name):
 
     @app.route('/')
     @cross_origin()
+    def hello():
+        return 'hello welcome to my api'
 
     @app.route('/images/', methods=['POST', 'GET'])
     def images_handler():
