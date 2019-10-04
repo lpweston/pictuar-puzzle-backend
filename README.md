@@ -8,6 +8,14 @@ Written in python 3 and using Flask, SQLAlchemy and Postgres.
 
 ## Installing
 
+### Requirements
+
+Python 3,
+Pip
+Virtualenv
+
+### Installing
+
 Clone and change into the directory
 
 ```
@@ -15,57 +23,52 @@ git clone https://github.com/lpweston/pictuar-puzzle-backend
 cd pictuar-puzzle-backend
 ```
 
+set up your virtual environment
+
+```
+python3 -m venv venv
+```
+
 Add a .env containing the following
 
 ```
 source venv/bin/activate
 export FLASK_APP="run.py"
-export SECRET="some-very-long-string-of-random-characters-CHANGE-TO-YOUR-LIKING"
+export SECRET="some-very-long-string-of-random-characters-and-a-bottle-of-rum"
 export APP_SETTINGS="development"
 export DATABASE_URL="postgresql://[PostGres_username]:[PostGres_Password]@localhost/flask_api"
+export TEST_DB="postgresql://[PostGres_username]:[PostGres_Password]@localhost/test_db"
 ```
 
 Where [PostGres_username] and [PostGres_Password] are replaced.
 
-And and /instance/config.pg, with the same replacement.
+Install and set up autoenv
 
 ```
-import os
+pip install -r requirements.txt
+pip install autoenv
+echo "source `which activate.sh`" >> ~/.bashrc
+source ~/.bashrc
+```
 
-class Config(object):
-    """Parent configuration class."""
-    DEBUG = False
-    CSRF_ENABLED = True
-    SECRET = os.getenv('SECRET')
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+You should be asked to approve it the first time, but if not try typing
 
+```
+source .env
+```
 
-class DevelopmentConfig(Config):
-    """Configurations for Development."""
-    DEBUG = True
+You're looking for it to say (venv) on the left of your file name and branch.
 
+## Running
 
-class TestingConfig(Config):
-    """Configurations for Testing, with a separate test database."""
-    TESTING = True
-    SQLALCHEMY_DATABASE_URI = "postgresql://[PostGres_username]:[PostGres_Password]@localhost/flask_api"
-    DEBUG = True
+To run the server locally:
 
-class StagingConfig(Config):
-    """Configurations for Staging."""
-    DEBUG = True
+```
+flask run
+```
 
+To run test suite:
 
-class ProductionConfig(Config):
-    """Configurations for Production."""
-    DEBUG = False
-    TESTING = False
-
-
-app_config = {
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'staging': StagingConfig,
-    'production': ProductionConfig,
-}
+```
+python test_server.py
 ```

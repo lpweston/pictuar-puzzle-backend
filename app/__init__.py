@@ -1,6 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+from flask_cors import CORS, cross_origin
 
 # local import
 from instance.config import app_config
@@ -10,12 +11,17 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import Image
+    from app.models import Image, PieceBeginner
     app = FlaskAPI(__name__, instance_relative_config=True)
+    cors = CORS(app)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['CORS_HEADERS'] = 'Content-Type'
     db.init_app(app)
+
+    @app.route('/')
+    @cross_origin()
 
     @app.route('/images/', methods=['POST', 'GET'])
     def images():
@@ -36,7 +42,6 @@ def create_app(config_name):
             # GET
             images = Image.get_all()
             results = []
-
             for image in images:
                 obj = {
                     'id': image.id,
@@ -77,13 +82,44 @@ def create_app(config_name):
             return response
         else:
             # GET
+            beginner_pieces = PieceBeginner.query.filter_by(img_id=id)
+            pieces = []
+            for piece in beginner_pieces:
+                obj = {
+                    'value': piece.value,
+                    'url': piece.url
+                }
+                pieces.append(obj)
             response = jsonify({
                 'id': image.id,
                 'url': image.url,
+                'beginner_pieces': pieces,
                 'date_created': image.date_created,
                 'date_modified': image.date_modified
             })
             response.status_code = 200
+            return response
+    
+    @app.route('/images/<int:id>/beginner-pieces', methods=['POST'])
+    def add_beginner_pieces(id, **kwargs):
+     # retrieve a image using it's ID
+        image = Image.query.filter_by(id=id).first()
+        if not image:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        elif request.method == 'POST':
+            value = str(request.data.get('value', ''))
+            url = str(request.data.get('url', ''))
+            piece = PieceBeginner(img_id = id, value = value, url=url)
+            piece.save()
+            response = jsonify({
+                'id': piece.id,
+                'img_id': piece.img_id,
+                'value': piece.value,
+                'url': piece.url,
+            })
+            response.status_code = 201
             return response
 
     return app
