@@ -26,6 +26,7 @@ def create_app(config_name):
         return 'hello welcome to my api'
 
     @app.route('/images/', methods=['POST', 'GET'])
+    @cross_origin()
     def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
@@ -57,6 +58,7 @@ def create_app(config_name):
             return response
 
     @app.route('/images/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    @cross_origin()
     def image_manipulation(id, **kwargs):
      # retrieve a image using it's ID
         image = Image.query.filter_by(id=id).first()
@@ -103,6 +105,7 @@ def create_app(config_name):
             return response
     
     @app.route('/images/<int:id>/beginner-pieces', methods=['POST'])
+    @cross_origin()
     def add_beginner_pieces(id, **kwargs):
      # retrieve a image using it's ID
         image = Image.query.filter_by(id=id).first()
