@@ -76,6 +76,45 @@ class ImageTestCase(unittest.TestCase):
             db.session.remove()
             db.drop_all()
 
+class PiecesTestCase(unittest.TestCase):
+    """This class represents the Piecces test case"""
+
+    def setUp(self):
+        """Define test variables and initialize app."""
+        self.app = create_app(config_name="testing")
+        self.client = self.app.test_client
+        self.image = {'url': 'https://i.imgur.com/jrMxxFY.jpg'}
+        self.pieces = {'value':'1', 'url': 'https://i.imgur.com/G1My5qP.jpeg'}
+
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
+
+    def test_pieces_creation(self):
+        """Test API can create a object of pieces (POST request)"""
+        res = self.client().post('/images/', data=self.image)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/images/1/beginner-pieces', data=self.pieces)
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('https://i.imgur.com/G1My5qP.jpeg', str(res.data))
+
+    def test_api_can_get_pieces_by_id(self):
+        """Test API can get a set of pieces from an object (GET request)."""
+        res = self.client().post('/images/', data=self.image)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().post('/images/1/beginner-pieces', data=self.pieces)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().get('/images/1')
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('https://i.imgur.com/G1My5qP.jpeg', str(res.data))
+
+    def tearDown(self):
+        """teardown all initialized variables."""
+        with self.app.app_context():
+            # drop all tables
+            db.session.remove()
+            db.drop_all()
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
