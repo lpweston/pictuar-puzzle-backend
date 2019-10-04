@@ -24,7 +24,7 @@ def create_app(config_name):
     @cross_origin()
 
     @app.route('/images/', methods=['POST', 'GET'])
-    def images():
+    def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
             if url:
