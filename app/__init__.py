@@ -13,7 +13,7 @@ db = SQLAlchemy()
 def create_app(config_name):
     from app.models import Image, PieceBeginner
     app = FlaskAPI(__name__, instance_relative_config=True)
-    CORS(app)
+    
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -25,6 +25,7 @@ def create_app(config_name):
         return 'hello welcome to my api'
 
     @app.route('/images/', methods=['POST', 'GET'])
+    @cross_origin()
     def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
