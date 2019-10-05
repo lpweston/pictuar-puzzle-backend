@@ -32,20 +32,10 @@
         {
           "url": "https://i.imgur.com/G1My5qP.jpeg",
           "value": 1
-        },
-        {
-          "url": "https://i.imgur.com/6SiFsrs.jpg",
-          "value": 2
-        },
-        {
-          "url": "https://i.imgur.com/mFWkFnq.jpg",
-          "value": 3
-        },
-        {
-          "url": "https://i.imgur.com/xJW1L6z.jpg",
-          "value": 4
         }
       ],
+      "intermediate_pieces": [],
+      "hard_pieces": [],
       "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
       "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
       "id": 1,

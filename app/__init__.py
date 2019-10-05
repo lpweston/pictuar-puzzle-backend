@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import Image, PieceBeginner, Tile
+    from app.models import Image, PieceBeginner, Tile, PieceIntermediate, PieceHard
     app = FlaskAPI(__name__, instance_relative_config=True)
     CORS(app, supports_credentials=True)
     app.config.from_object(app_config[config_name])
@@ -83,17 +83,35 @@ def create_app(config_name):
         else:
             # GET
             beginner_pieces = PieceBeginner.query.filter_by(img_id=id)
-            pieces = []
+            bpieces = []
             for piece in beginner_pieces:
                 obj = {
                     'value': piece.value,
                     'url': piece.url
                 }
-                pieces.append(obj)
+                bpieces.append(obj)
+            intermediate_pieces = PieceIntermediate.query.filter_by(img_id=id)
+            ipieces = []
+            for piece in intermediate_pieces:
+                obj = {
+                    'value': piece.value,
+                    'url': piece.url
+                }
+                ipieces.append(obj)
+            hard_pieces = PieceHard.query.filter_by(img_id=id)
+            hpieces = []
+            for piece in hard_pieces:
+                obj = {
+                    'value': piece.value,
+                    'url': piece.url
+                }
+                hpieces.append(obj)
             response = jsonify({
                 'id': image.id,
                 'url': image.url,
-                'beginner_pieces': pieces,
+                'beginner_pieces': bpieces,
+                'intermediate_pieces': ipieces,
+                'hard_pieces': hpieces,
                 'date_created': image.date_created,
                 'date_modified': image.date_modified
             })
