@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import Image, PieceBeginner
+    from app.models import Image, PieceBeginner, Tile
     app = FlaskAPI(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
@@ -55,7 +55,7 @@ def create_app(config_name):
 
     @app.route('/images/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def image_manipulation(id, **kwargs):
-     # retrieve a image using it's ID
+         # retrieve a image using it's ID
         image = Image.query.filter_by(id=id).first()
         if not image:
             # Raise an HTTPException with a 404 not found status code
@@ -121,5 +121,32 @@ def create_app(config_name):
             response.status_code = 201
             return response
             
-            
+    @app.route('/tiles/', methods=['POST', 'GET'])
+    def tiles_handler():
+        if request.method == "POST":
+            url = str(request.data.get('url', ''))
+            if url:
+                tile = Tile(url=url)
+                tile.save()
+                response = jsonify({
+                    'id': tile.id,
+                    'url': tile.url
+                })
+                response.status_code = 201
+                return response
+        else:
+            # GET
+            tiles = Tile.get_all()
+            print(tiles)
+            results = []
+            for tile in tiles:
+                obj = {
+                    'id': tile.id,
+                    'url': tile.url
+                }
+                results.append(obj)
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+
     return app
