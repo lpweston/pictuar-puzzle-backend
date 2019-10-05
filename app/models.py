@@ -64,3 +64,31 @@ class PieceBeginner(db.Model):
 
     def __repr__(self):
         return "<Img: {}, Beginner Piece {}: {}>".format(self.img_id, self.value , self.url)
+
+
+class Tile(db.Model):
+    """This class represents the Tiles table."""
+
+    __tablename__ = 'tiles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255))
+    
+    def __init__(self, url):
+        """initialize with url."""
+        self.url = url
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return Tile.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Tile {}: {}>".format(self.id, self.url)
