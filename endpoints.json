@@ -64,5 +64,24 @@
       "url": "https://i.imgur.com/xJW1L6z.jpg",
       "value": 5
     }
+  },
+  "GET /tiles/": {
+    "description": "serves an array of all tile pieces",
+    "example responce": [
+      {
+        "id": 1,
+        "url": "https://imgur.com/HUTapc6.png"
+      }
+    ]
+  },
+  "POST /tiles/": {
+    "description": "posts a tile piece",
+    "example body": {
+      "url": "https: //i.imgur.com/RRU1Nl1.png"
+    },
+    "example responce": {
+      "id": 2,
+      "url": "https://i.imgur.com/RRU1Nl1.png"
+    }
   }
 }

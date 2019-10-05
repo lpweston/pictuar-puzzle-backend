@@ -68,7 +68,6 @@ def create_app(config_name):
             return {
             "message": "image {} deleted successfully".format(image.id) 
          }, 200
-
         elif request.method == 'PUT':
             url = str(request.data.get('url', ''))
             image.url = url
@@ -123,7 +122,7 @@ def create_app(config_name):
             response.status_code = 201
             return response
             
-    @app.route('/tiles/', methods=['POST', 'GET'])
+    @app.route('/tiles/', methods=['POST', 'GET', 'PUT'])
     def tiles_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
@@ -135,6 +134,19 @@ def create_app(config_name):
                     'url': tile.url
                 })
                 response.status_code = 201
+                return response
+        elif request.method == "PUT":
+            id = str(request.data.get('id', ''))
+            url = str(request.data.get('url',''))
+            if url and id:
+                tile =  Tile.query.filter_by(id=id).first()
+                tile.url = url
+                tile.save()
+                response = jsonify({
+                'id': tile.id,
+                'url': tile.url
+                })
+                response.status_code = 200
                 return response
         else:
             # GET
