@@ -139,6 +139,50 @@ def create_app(config_name):
             })
             response.status_code = 201
             return response
+
+    @app.route('/images/<int:id>/intermediate-pieces', methods=['POST'])
+    def add_intermediate_pieces(id, **kwargs):
+     # retrieve a image using it's ID
+        image = Image.query.filter_by(id=id).first()
+        if not image:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        elif request.method == 'POST':
+            value = str(request.data.get('value', ''))
+            url = str(request.data.get('url', ''))
+            piece = PieceIntermediate(img_id = id, value = value, url=url)
+            piece.save()
+            response = jsonify({
+                'id': piece.id,
+                'img_id': piece.img_id,
+                'value': piece.value,
+                'url': piece.url,
+            })
+            response.status_code = 201
+            return response
+    
+    @app.route('/images/<int:id>/hard-pieces', methods=['POST'])
+    def add_hard_pieces(id, **kwargs):
+     # retrieve a image using it's ID
+        image = Image.query.filter_by(id=id).first()
+        if not image:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        elif request.method == 'POST':
+            value = str(request.data.get('value', ''))
+            url = str(request.data.get('url', ''))
+            piece = PieceHard(img_id = id, value = value, url=url)
+            piece.save()
+            response = jsonify({
+                'id': piece.id,
+                'img_id': piece.img_id,
+                'value': piece.value,
+                'url': piece.url,
+            })
+            response.status_code = 201
+            return response
             
     @app.route('/tiles/', methods=['POST', 'GET', 'PUT'])
     def tiles_handler():
