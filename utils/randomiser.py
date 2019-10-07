@@ -21,7 +21,7 @@ def randomiser(diff):
         tilesObj.append(obj)
 
     whole = Image.new('RGBA',(400,400),'white')
-    random.shuffle(tiles)
+    random.shuffle(tilesObj)
 
     for num in range(0,diff):
             tile = tilesObj[num]
