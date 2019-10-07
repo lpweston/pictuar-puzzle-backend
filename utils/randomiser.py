@@ -8,7 +8,7 @@ import json
 import base64
 
 def randomiser(diff):
-    asignment = {}
+    assignment = {}
     images = {}
     req = requests.get('https://pictuar-puzzle.herokuapp.com/tiles')
     if req.status_code==200:
@@ -20,7 +20,7 @@ def randomiser(diff):
                 tile = tiles[num]
                 url = tile.get('url', '')
                 imgid = tile.get('id','')
-                asignment[num] = imgid
+                assignment[num] = imgid
                 buffer = tempfile.SpooledTemporaryFile(max_size=1e9)
                 r = requests.get(url, stream=True)
                 if r.status_code == 200:
@@ -38,9 +38,6 @@ def randomiser(diff):
         whole.paste(images[2].resize((200,200)),(0,200))
         whole.paste(images[3].resize((200,200)),(200,200))
 
-        # whole.save('./whole.png')
-
-        # imgur snippet
         buffered = io.BytesIO()
         whole.save(buffered, format="PNG")
         img_str = base64.b64encode(buffered.getvalue())
@@ -52,9 +49,11 @@ def randomiser(diff):
         'Authorization': 'Bearer fc0a9f7020eae6353ae08011ef2852caff0e0922'
         }
         response = requests.request('POST', url='https://api.imgur.com/3/image', headers = headers, data = payload, files = files, allow_redirects=False)
-        # assignment['url'] = imgur_url
+        if response.status_code==200:
+            res = json.loads(response.content.decode('utf-8'))
+            assignment['url'] = res['data']['link']
 
-        return asignment
+        return assignment
 
 
 randomiser(4)

@@ -170,10 +170,20 @@ class Game(db.Model):
     date_completed = db.Column(db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
     score = db.Column(db.Time)
+    one = db.Column(db.Integer)
+    two = db.Column(db.Integer)
+    three = db.Column(db.Integer)
+    four = db.Column(db.Integer)
+    win_img = db.Column(db.String(255))
 
-    def __init__(self, img_id):
+    def __init__(self, img_id, one, two, three, four, win_img):
         """initialize with img_id."""
         self.img_id = img_id
+        self.one = one
+        self.two = two
+        self.three = three
+        self.four= four
+        self.win_img = win_img
 
     def save(self):
         db.session.add(self)

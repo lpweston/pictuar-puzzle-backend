@@ -4,7 +4,7 @@
   },
   "GET /images/": {
     "description": "serves an array of all images",
-    "example responce": [
+    "example response": [
       {
         "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
         "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
@@ -18,7 +18,7 @@
     "example body": {
       "url": "https://i.imgur.com/xJW1L6z.jpg"
     },
-    "example responce": {
+    "example response": {
       "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
       "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
       "id": 1,
@@ -27,7 +27,7 @@
   },
   "GET /images/:img_id": {
     "description": "serves an image and it's pieces",
-    "example responce": {
+    "example response": {
       "beginner_pieces": [
         {
           "url": "https://i.imgur.com/G1My5qP.jpeg",
@@ -43,21 +43,27 @@
     }
   },
   "POST /images/:img_id/beginner-pieces": {
-    "description": "posts a piece of an image to that image, were value tells you which piece it is from left -> right, top-> bottom",
+    "description": "posts a piece of an image to that image, were value tells you which piece it is from left -> right, top-> bottom.",
     "example body": {
       "value": 1,
       "url": "https://i.imgur.com/G1My5qP.jpeg"
     },
-    "example responce": {
+    "example response": {
       "id": 10,
       "img_id": 1,
       "url": "https://i.imgur.com/xJW1L6z.jpg",
       "value": 5
     }
   },
+  "POST /images/:img_id/intermediate-pieces": {
+    "description": "As above, but for 3x3 game"
+  },
+  "POST /images/:img_id/hard-pieces": {
+    "description": "As above, but for 4x4 game"
+  },
   "GET /tiles/": {
     "description": "serves an array of all tile pieces",
-    "example responce": [
+    "example response": [
       {
         "id": 1,
         "url": "https://imgur.com/HUTapc6.png"
@@ -69,9 +75,82 @@
     "example body": {
       "url": "https: //i.imgur.com/RRU1Nl1.png"
     },
-    "example responce": {
+    "example response": {
       "id": 2,
       "url": "https://i.imgur.com/RRU1Nl1.png"
+    }
+  },
+  "GET /games/": {
+    "description": "serves an array of games",
+    "example response": [
+      {
+        "date_completed": "Mon, 07 Oct 2019 15:28:10 GMT",
+        "date_created": "Mon, 07 Oct 2019 15:28:10 GMT",
+        "id": 1,
+        "img_id": 1,
+        "relation": {
+          "1": 4,
+          "2": 8,
+          "3": 1,
+          "4": 5
+        },
+        "score": null,
+        "win_img": "https://i.imgur.com/66jbgD1.png"
+      }
+    ]
+  },
+  "POST /games/": {
+    "description": "posts a new game",
+    "example body": {
+      "img_id": "1"
+    },
+    "example response": {
+      "date_completed": "Mon, 07 Oct 2019 15:28:10 GMT",
+      "date_created": "Mon, 07 Oct 2019 15:28:10 GMT",
+      "id": 1,
+      "img_id": 1,
+      "relation": {
+        "1": 4,
+        "2": 8,
+        "3": 1,
+        "4": 5
+      },
+      "score": null,
+      "win_img": "https://i.imgur.com/66jbgD1.png"
+    }
+  },
+  "GET /games/:game_id": {
+    "description": "serves a game",
+    "example response": {
+      "date_completed": "Mon, 07 Oct 2019 15:28:10 GMT",
+      "date_created": "Mon, 07 Oct 2019 15:28:10 GMT",
+      "id": 1,
+      "img_id": 1,
+      "relation": {
+        "1": 4,
+        "2": 8,
+        "3": 1,
+        "4": 5
+      },
+      "score": null,
+      "win_img": "https://i.imgur.com/66jbgD1.png"
+    }
+  },
+  "PUT /games/:game_id": {
+    "description": "updates the date_completed and returns a score",
+    "example response": {
+      "date_completed": "Mon, 07 Oct 2019 15:28:10 GMT",
+      "date_created": "Mon, 07 Oct 2019 16:28:10 GMT",
+      "id": 1,
+      "img_id": 1,
+      "relation": {
+        "1": 4,
+        "2": 8,
+        "3": 1,
+        "4": 5
+      },
+      "score": "01:00:00",
+      "win_img": "https://i.imgur.com/66jbgD1.png"
     }
   }
 }
