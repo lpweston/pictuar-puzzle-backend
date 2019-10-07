@@ -158,3 +158,34 @@ class Tile(db.Model):
 
     def __repr__(self):
         return "<Tile {}: {}>".format(self.id, self.url)
+
+class Game(db.Model):
+    """This class represents the Games table."""
+
+    __tablename__ = 'games'
+
+    id = db.Column(db.Integer, primary_key=True)
+    img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_completed = db.Column(db.DateTime, default=db.func.current_timestamp(),
+        onupdate=db.func.current_timestamp())
+    score = db.Column(db.Time)
+
+    def __init__(self, img_id):
+        """initialize with img_id."""
+        self.img_id = img_id
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return Game.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<Game: {}>".format(self.id)

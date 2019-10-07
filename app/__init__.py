@@ -213,7 +213,6 @@ def create_app(config_name):
         else:
             # GET
             tiles = Tile.get_all()
-            print(tiles)
             results = []
             for tile in tiles:
                 obj = {
@@ -222,6 +221,47 @@ def create_app(config_name):
                 }
                 results.append(obj)
             response = jsonify(results)
+            response.status_code = 200
+            return response
+
+    @app.route('/game/', methods=['POST', 'GET'])
+    def game_handler():
+        if request.method == "POST":
+            img_id = str(request.data.get('img_id', ''))
+            if img_id:
+                game = Game(img_id=img_id)
+                game.save()
+                response = jsonify({
+                    'id': game.id,
+                    'img_id': game.img_id
+                })
+                response.status_code = 201
+                return response
+        else:
+            # GET
+            games = Game.get_all()
+            results = []
+            for game in games:
+                obj = {
+                    'id': game.id,
+                    'img_id': game.img_id
+                }
+                results.append(obj)
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+
+    @app.route('/game/<int:id>', methods=['PUT'])
+    def game_complete(id, **kwargs):
+        img_id = str(request.data.get('img_id',''))
+        if img_id:
+            tile =  Tile.query.filter_by(id=id).first()
+            tile.score = tile.created # minus the time now 
+            tile.save()
+            response = jsonify({
+            'id': tile.id,
+            'img_id': tile.img_id
+            })
             response.status_code = 200
             return response
 
