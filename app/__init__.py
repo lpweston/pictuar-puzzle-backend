@@ -231,13 +231,13 @@ def create_app(config_name):
         if request.method == "POST":
             img_id = str(request.data.get('img_id', ''))
             if img_id:
-                obj = randomiser(4)
-                one = obj[0]
-                two = obj[1]
-                three = obj[2]
-                four = obj[3]
-                win_img = obj['url']
-                game = Game(img_id, one, two, three, four, win_img)
+                # obj = randomiser(4)
+                # one = obj[0]
+                # two = obj[1]
+                # three = obj[2]
+                # four = obj[3]
+                # win_img = obj['url']
+                game = Game(img_id, one=1, two=2, three=3, four=4, win_img="madeupurl.com")
                 game.save()
                 response = jsonify({
                     'id': game.id,
