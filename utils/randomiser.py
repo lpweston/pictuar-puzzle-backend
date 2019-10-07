@@ -67,6 +67,3 @@ def randomiser(diff):
         assignment['url'] = res['data']['link']
 
     return assignment
-
-
-randomiser(4)
