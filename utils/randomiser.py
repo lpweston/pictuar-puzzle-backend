@@ -8,31 +8,25 @@ import json
 import base64
 
 def randomiser(diff):
+    from app.models import Tile
     assignment = {}
     images = {}
-    # req = requests.get('https://pictuar-puzzle.herokuapp.com/tiles')
-    # if req.status_code==200:
-    #     tiles = json.loads(req.content.decode('utf-8'))
-    tiles = [{
-      "id": 2,
-      "url": "https://i.imgur.com/RRU1Nl1.png"
-    },{
-      "id": 1,
-      "url": "https://i.imgur.com/RRU1Nl1.png"
-    },{
-      "id": 3,
-      "url": "https://i.imgur.com/RRU1Nl1.png"
-    },{
-      "id": 4,
-      "url": "https://i.imgur.com/RRU1Nl1.png"
-    }]
+    tiles = Tile.get_all()
+    tilesObj = []
+    for tile in tiles:
+        obj = {
+                'id': tile.id,
+                'url': tile.url
+            }
+        tilesObj.append(obj)
+
     whole = Image.new('RGBA',(400,400),'white')
     random.shuffle(tiles)
 
     for num in range(0,diff):
-            tile = tiles[num]
-            url = tile.get('url', '')
-            imgid = tile.get('id','')
+            tile = tilesObj[num]
+            url = tile['url']
+            imgid = tile['id']
             assignment[num] = imgid
             buffer = tempfile.SpooledTemporaryFile(max_size=1e9)
             r = requests.get(url, stream=True)

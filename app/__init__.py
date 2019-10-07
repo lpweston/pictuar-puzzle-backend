@@ -231,9 +231,7 @@ def create_app(config_name):
         if request.method == "POST":
             img_id = str(request.data.get('img_id', ''))
             if img_id:
-                print('got request')
                 obj = randomiser(4)
-                print(obj)
                 one = obj[0]
                 two = obj[1]
                 three = obj[2]
@@ -323,6 +321,5 @@ def create_app(config_name):
                 })
                 response.status_code = 200
                 return response
-
 
     return app
