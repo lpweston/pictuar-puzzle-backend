@@ -1,0 +1,60 @@
+import os
+import io
+import requests
+from PIL import Image
+import tempfile
+import random
+import json
+import base64
+
+def randomiser(diff):
+    asignment = {}
+    images = {}
+    req = requests.get('https://pictuar-puzzle.herokuapp.com/tiles')
+    if req.status_code==200:
+        tiles = json.loads(req.content.decode('utf-8'))
+        whole = Image.new('RGBA',(400,400),'white')
+        random.shuffle(tiles)
+
+        for num in range(0,diff):
+                tile = tiles[num]
+                url = tile.get('url', '')
+                imgid = tile.get('id','')
+                asignment[num] = imgid
+                buffer = tempfile.SpooledTemporaryFile(max_size=1e9)
+                r = requests.get(url, stream=True)
+                if r.status_code == 200:
+                    downloaded = 0
+                    filesize = int(r.headers['content-length'])
+                    for chunk in r.iter_content():
+                        downloaded += len(chunk)
+                        buffer.write(chunk)
+                    buffer.seek(0)
+                    images[num] = Image.open(io.BytesIO(buffer.read()))
+                buffer.close()
+       
+        whole.paste(images[0].resize((200,200)),(0,0))
+        whole.paste(images[1].resize((200,200)),(200,0))
+        whole.paste(images[2].resize((200,200)),(0,200))
+        whole.paste(images[3].resize((200,200)),(200,200))
+
+        # whole.save('./whole.png')
+
+        # imgur snippet
+        buffered = io.BytesIO()
+        whole.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue())
+
+        imgururl = 'https://api.imgur.com/3/image'
+        payload = {'image': img_str}
+        files = {}
+        headers = {
+        'Authorization': 'Bearer fc0a9f7020eae6353ae08011ef2852caff0e0922'
+        }
+        response = requests.request('POST', url='https://api.imgur.com/3/image', headers = headers, data = payload, files = files, allow_redirects=False)
+        # assignment['url'] = imgur_url
+
+        return asignment
+
+
+randomiser(4)
