@@ -1,0 +1,77 @@
+{
+  "GET /": {
+    "description": "serves this JSON you're reading right now"
+  },
+  "GET /images/": {
+    "description": "serves an array of all images",
+    "example responce": [
+      {
+        "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
+        "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
+        "id": 1,
+        "url": "https://i.imgur.com/jrMxxFY.jpg"
+      }
+    ]
+  },
+  "POST /images/": {
+    "description": "posts an image",
+    "example body": {
+      "url": "https://i.imgur.com/xJW1L6z.jpg"
+    },
+    "example responce": {
+      "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
+      "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
+      "id": 1,
+      "url": "https://i.imgur.com/jrMxxFY.jpg"
+    }
+  },
+  "GET /images/:img_id": {
+    "description": "serves an image and it's pieces",
+    "example responce": {
+      "beginner_pieces": [
+        {
+          "url": "https://i.imgur.com/G1My5qP.jpeg",
+          "value": 1
+        }
+      ],
+      "intermediate_pieces": [],
+      "hard_pieces": [],
+      "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
+      "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
+      "id": 1,
+      "url": "https://i.imgur.com/jrMxxFY.jpg"
+    }
+  },
+  "POST /images/:img_id/beginner-pieces": {
+    "description": "posts a piece of an image to that image, were value tells you which piece it is from left -> right, top-> bottom",
+    "example body": {
+      "value": 1,
+      "url": "https://i.imgur.com/G1My5qP.jpeg"
+    },
+    "example responce": {
+      "id": 10,
+      "img_id": 1,
+      "url": "https://i.imgur.com/xJW1L6z.jpg",
+      "value": 5
+    }
+  },
+  "GET /tiles/": {
+    "description": "serves an array of all tile pieces",
+    "example responce": [
+      {
+        "id": 1,
+        "url": "https://imgur.com/HUTapc6.png"
+      }
+    ]
+  },
+  "POST /tiles/": {
+    "description": "posts a tile piece",
+    "example body": {
+      "url": "https: //i.imgur.com/RRU1Nl1.png"
+    },
+    "example responce": {
+      "id": 2,
+      "url": "https://i.imgur.com/RRU1Nl1.png"
+    }
+  }
+}

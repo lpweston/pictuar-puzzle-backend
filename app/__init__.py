@@ -1,6 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+from flask_cors import CORS
 
 # local import
 from instance.config import app_config
@@ -10,16 +11,21 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import Image, PieceBeginner
+    from app.models import Image, PieceBeginner, Tile, PieceIntermediate, PieceHard
     app = FlaskAPI(__name__, instance_relative_config=True)
-    print(config_name)
+    CORS(app, supports_credentials=True)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
+    @app.route('/', methods=['GET'])
+    def api():
+        endpoints=open("endpoints.json","r")
+        return endpoints.read()
+
     @app.route('/images/', methods=['POST', 'GET'])
-    def images():
+    def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
             if url:
@@ -51,7 +57,7 @@ def create_app(config_name):
 
     @app.route('/images/<int:id>', methods=['GET', 'PUT', 'DELETE'])
     def image_manipulation(id, **kwargs):
-     # retrieve a image using it's ID
+         # retrieve a image using it's ID
         image = Image.query.filter_by(id=id).first()
         if not image:
             # Raise an HTTPException with a 404 not found status code
@@ -62,7 +68,6 @@ def create_app(config_name):
             return {
             "message": "image {} deleted successfully".format(image.id) 
          }, 200
-
         elif request.method == 'PUT':
             url = str(request.data.get('url', ''))
             image.url = url
@@ -78,17 +83,35 @@ def create_app(config_name):
         else:
             # GET
             beginner_pieces = PieceBeginner.query.filter_by(img_id=id)
-            pieces = []
+            bpieces = []
             for piece in beginner_pieces:
                 obj = {
                     'value': piece.value,
                     'url': piece.url
                 }
-                pieces.append(obj)
+                bpieces.append(obj)
+            intermediate_pieces = PieceIntermediate.query.filter_by(img_id=id)
+            ipieces = []
+            for piece in intermediate_pieces:
+                obj = {
+                    'value': piece.value,
+                    'url': piece.url
+                }
+                ipieces.append(obj)
+            hard_pieces = PieceHard.query.filter_by(img_id=id)
+            hpieces = []
+            for piece in hard_pieces:
+                obj = {
+                    'value': piece.value,
+                    'url': piece.url
+                }
+                hpieces.append(obj)
             response = jsonify({
                 'id': image.id,
                 'url': image.url,
-                'beginner_pieces': pieces,
+                'beginner_pieces': bpieces,
+                'intermediate_pieces': ipieces,
+                'hard_pieces': hpieces,
                 'date_created': image.date_created,
                 'date_modified': image.date_modified
             })
@@ -115,6 +138,47 @@ def create_app(config_name):
                 'url': piece.url,
             })
             response.status_code = 201
+            return response
+            
+    @app.route('/tiles/', methods=['POST', 'GET', 'PUT'])
+    def tiles_handler():
+        if request.method == "POST":
+            url = str(request.data.get('url', ''))
+            if url:
+                tile = Tile(url=url)
+                tile.save()
+                response = jsonify({
+                    'id': tile.id,
+                    'url': tile.url
+                })
+                response.status_code = 201
+                return response
+        elif request.method == "PUT":
+            id = str(request.data.get('id', ''))
+            url = str(request.data.get('url',''))
+            if url and id:
+                tile =  Tile.query.filter_by(id=id).first()
+                tile.url = url
+                tile.save()
+                response = jsonify({
+                'id': tile.id,
+                'url': tile.url
+                })
+                response.status_code = 200
+                return response
+        else:
+            # GET
+            tiles = Tile.get_all()
+            print(tiles)
+            results = []
+            for tile in tiles:
+                obj = {
+                    'id': tile.id,
+                    'url': tile.url
+                }
+                results.append(obj)
+            response = jsonify(results)
+            response.status_code = 200
             return response
 
     return app
