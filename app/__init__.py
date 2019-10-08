@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
 from flask_cors import CORS
 from utils.randomiser import randomiser
+from utils.cropper import cropper
 from datetime import datetime
 
 # local import
@@ -33,11 +34,24 @@ def create_app(config_name):
             if url:
                 image = Image(url=url)
                 image.save()
+                pieces = cropper(4, url)
+                for item in pieces:
+                    piece = PieceBeginner(img_id = image.id, value = item['value'], url=item['url'])
+                    piece.save()
+                beginner_pieces = PieceBeginner.query.filter_by(img_id=image.id)
+                bpieces = []
+                for piece in beginner_pieces:
+                    obj = {
+                        'value': piece.value,
+                        'url': piece.url
+                    }
+                    bpieces.append(obj)
                 response = jsonify({
                     'id': image.id,
                     'url': image.url,
                     'date_created': image.date_created,
-                    'date_modified': image.date_modified
+                    'date_modified': image.date_modified,
+                    'beginner_pieces': bpieces,
                 })
                 response.status_code = 201
                 return response
@@ -118,28 +132,6 @@ def create_app(config_name):
                 'date_modified': image.date_modified
             })
             response.status_code = 200
-            return response
-    
-    @app.route('/images/<int:id>/beginner-pieces', methods=['POST'])
-    def add_beginner_pieces(id, **kwargs):
-     # retrieve a image using it's ID
-        image = Image.query.filter_by(id=id).first()
-        if not image:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
-
-        elif request.method == 'POST':
-            value = str(request.data.get('value', ''))
-            url = str(request.data.get('url', ''))
-            piece = PieceBeginner(img_id = id, value = value, url=url)
-            piece.save()
-            response = jsonify({
-                'id': piece.id,
-                'img_id': piece.img_id,
-                'value': piece.value,
-                'url': piece.url,
-            })
-            response.status_code = 201
             return response
 
     @app.route('/images/<int:id>/intermediate-pieces', methods=['POST'])

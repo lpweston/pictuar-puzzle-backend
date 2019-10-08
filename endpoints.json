@@ -43,7 +43,7 @@
     }
   },
   "POST /images/:img_id/beginner-pieces": {
-    "description": "posts a piece of an image to that image, were value tells you which piece it is from left -> right, top-> bottom.",
+    "description": "posts a piece of an image to that image, where value tells you which piece it is from left -> right, top-> bottom.",
     "example body": {
       "value": 1,
       "url": "https://i.imgur.com/G1My5qP.jpeg"
