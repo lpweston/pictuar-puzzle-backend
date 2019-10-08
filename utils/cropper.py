@@ -7,6 +7,8 @@ import json
 import base64
 
 def cropper(diff, url):
+    if 'jpg' in url:
+        url = url.replace('.jpg','.png')
     response = requests.get(url)
     whole = Image.open(io.BytesIO(response.content))
     whole_rs = whole.resize((400,400))
