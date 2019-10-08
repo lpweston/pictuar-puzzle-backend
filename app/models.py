@@ -167,7 +167,7 @@ class Game(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_completed = db.Column(db.DateTime, default=db.func.current_timestamp(),
+    date_completed = db.Column(db.DateTime,
         onupdate=db.func.current_timestamp())
     score = db.Column(db.Time)
     one = db.Column(db.Integer)

@@ -231,12 +231,13 @@ def create_app(config_name):
                 win_img = obj['url']
                 game = Game(img_id, one, two, three, four, win_img)
                 game.save()
+                score = 'null'
                 response = jsonify({
                     'id': game.id,
                     'img_id': game.img_id,
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
-                    'score':game.score,
+                    'score': 'null',
                     'relation':{
                         '1': game.one,
                         '2' : game.two,
@@ -252,12 +253,16 @@ def create_app(config_name):
             games = Game.get_all()
             results = []
             for game in games:
+                if game.score:
+                    score = game.score.strftime("%H:%M:%S")
+                else:
+                    score = 'null'
                 obj = {
                     'id': game.id,
                     'img_id': game.img_id,
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
-                    'score':game.score,
+                    'score': score,
                     'relation':{
                         '1': game.one,
                         '2' : game.two,
@@ -273,45 +278,48 @@ def create_app(config_name):
 
     @app.route('/games/<int:id>', methods=['PUT', 'GET'])
     def game_complete(id, **kwargs):
-        img_id = str(request.data.get('img_id',''))
-        if img_id:
-            if request.method == "POST":
-                game =  Game.query.filter_by(id=id).first()
-                game.score = game.created - datetime.now() 
-                game.save()
-                response = jsonify({
-                    'id': game.id,
-                    'img_id': game.img_id,
-                    'date_created': game.date_created,
-                    'date_completed': game.date_completed,
-                    'score':game.score,
-                    'relation':{
-                        '1': game.one,
-                        '2' : game.two,
-                        '3': game.three,
-                        '4': game.four,
-                    },
-                    'win_img': game.win_img
-                })
-                response.status_code = 200
-                return response
+        if request.method == "PUT":
+            game =  Game.query.filter_by(id=id).first()
+            game.score = game.date_created - datetime.now() 
+            game.save()
+            score = game.score.strftime("%H:%M:%S")
+            response = jsonify({
+                'id': game.id,
+                'img_id': game.img_id,
+                'date_created': game.date_created,
+                'date_completed': game.date_completed,
+                'score': score,
+                'relation':{
+                    '1': game.one,
+                    '2' : game.two,
+                    '3': game.three,
+                    '4': game.four,
+                },
+                'win_img': game.win_img
+            })
+            response.status_code = 200
+            return response
+        else:
+            game =  Game.query.filter_by(id=id).first()
+            if game.score:
+                score = game.score.strftime("%H:%M:%S")
             else:
-                game =  Game.query.filter_by(id=id).first()
-                response = jsonify({
-                    'id': game.id,
-                    'img_id': game.img_id,
-                    'date_created': game.date_created,
-                    'date_completed': game.date_completed,
-                    'score':game.score,
-                    'relation':{
-                        '1': game.one,
-                        '2' : game.two,
-                        '3': game.three,
-                        '4': game.four,
-                    },
-                    'win_img': game.win_img
-                })
-                response.status_code = 200
-                return response
+                score = 'null'
+            response = jsonify({
+                'id': game.id,
+                'img_id': game.img_id,
+                'date_created': game.date_created,
+                'date_completed': game.date_completed,
+                'score':score,
+                'relation':{
+                    '1': game.one,
+                    '2' : game.two,
+                    '3': game.three,
+                    '4': game.four,
+                },
+                'win_img': game.win_img
+            })
+            response.status_code = 200
+            return response
 
     return app
