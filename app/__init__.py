@@ -280,7 +280,7 @@ def create_app(config_name):
     def game_complete(id, **kwargs):
         if request.method == "PUT":
             game =  Game.query.filter_by(id=id).first()
-            game.score = game.date_created - datetime.now() 
+            game.score = datetime.now() - game.date_created
             game.save()
             score = game.score.strftime("%H:%M:%S")
             response = jsonify({
