@@ -83,9 +83,9 @@ def create_app(config_name):
             diff = int(request.data.get('diff', ''))
             user_id = int(request.data.get('user_id', ''))
             if url and diff:
-                image = Image(url=url)
+                image = Image(url=url, user_id)
                 image.save()
-                pieces = cropper(diff, url, user_id)
+                pieces = cropper(diff, url)
                 if diff == 4:
                     for item in pieces:
                         piece = PieceBeginner(img_id = image.id, value = item['value'], url=item['url'])
