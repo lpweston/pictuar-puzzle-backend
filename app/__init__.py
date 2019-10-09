@@ -256,6 +256,7 @@ def create_app(config_name):
         if request.method == "POST":
             img_id = str(request.data.get('img_id', ''))
             diff = int(request.data.get('diff', ''))
+            user_id = int(request.data.get('user_id', ''))
             if img_id and diff:
                 obj = randomiser(diff)
                 rel = []
@@ -263,7 +264,7 @@ def create_app(config_name):
                     num = num +1 
                     rel.append(obj[num-1])
                 win_img = obj['url']
-                game = Game(img_id, rel, win_img)
+                game = Game(img_id, rel, win_img, user_id)
                 game.save()
                 relation = {}
                 if game.t1:
@@ -302,6 +303,7 @@ def create_app(config_name):
                 response = jsonify({
                     'id': game.id,
                     'img_id': game.img_id,
+                    'user_id': game.user_id,
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
                     'score': 'null',
@@ -358,6 +360,7 @@ def create_app(config_name):
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
                     'score': score,
+                    'user_id': game.user_id,
                     'relation':relation,
                     'win_img': game.win_img
                 }
@@ -412,6 +415,7 @@ def create_app(config_name):
                 'date_created': game.date_created,
                 'date_completed': game.date_completed,
                 'score': score,
+                'user_id': game.user_id,
                 'relation':relation,
                 'win_img': game.win_img
             })
@@ -463,6 +467,7 @@ def create_app(config_name):
                 'date_completed': game.date_completed,
                 'score': score,
                 'relation': relation,
+                'user_id': game.user_id,
                 'win_img': game.win_img
             })
             response.status_code = 200
