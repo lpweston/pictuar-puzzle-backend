@@ -2,6 +2,46 @@
   "GET /": {
     "description": "serves this JSON you're reading right now"
   },
+  "GET /users/": {
+    "description": "serves an array of all users",
+    "example response": [
+      {
+        "email": "someone@email.com",
+        "id": 1,
+        "name": "Sam",
+        "password": "password1",
+        "username": "Sammy"
+      }
+    ]
+  },
+  "POST /users/": {
+    "description": "Posts a new user",
+    "example body": {
+      "email": "someone@email.com",
+      "password": "password1",
+      "username": "Sammy",
+      "name": "Sam"
+    },
+    "example response": [
+      {
+        "email": "someone@email.com",
+        "id": 1,
+        "name": "Sam",
+        "password": "password1",
+        "username": "Sammy"
+      }
+    ]
+  },
+  "GET /users/:id": {
+    "description": "serves a user",
+    "example response": {
+      "email": "someone@email.com",
+      "id": 1,
+      "name": "Sam",
+      "password": "password1",
+      "username": "Sammy"
+    }
+  },
   "GET /images/": {
     "description": "serves an array of all images",
     "example response": [

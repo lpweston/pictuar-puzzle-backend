@@ -1,4 +1,7 @@
 from app import db
+from flask_bcrypt import Bcrypt
+import jwt
+from datetime import datetime, timedelta
 
 
 class Image(db.Model):
@@ -8,6 +11,7 @@ class Image(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     beginnerPieces = db.relationship('PieceBeginner', backref='image', lazy='dynamic')
     intermediatePieces = db.relationship('PieceIntermediate', backref='image', lazy='dynamic')
     hardPieces = db.relationship('PieceHard', backref='image', lazy='dynamic')
@@ -16,9 +20,11 @@ class Image(db.Model):
         db.DateTime, default=db.func.current_timestamp(),
         onupdate=db.func.current_timestamp())
 
-    def __init__(self, url):
+    def __init__(self, url, user_id):
         """initialize with url."""
         self.url = url
+        if user_id:
+            self.user_id = user_id
 
     def save(self):
         db.session.add(self)
@@ -166,6 +172,7 @@ class Game(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     img_id = db.Column(db.Integer, db.ForeignKey('images.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
     date_completed = db.Column(db.DateTime,
         onupdate=db.func.current_timestamp())
@@ -188,9 +195,10 @@ class Game(db.Model):
     t16 = db.Column(db.Integer)
     win_img = db.Column(db.String(255))
 
-    def __init__(self, img_id, rel, win_img):
+    def __init__(self, img_id, rel, win_img, user_id):
         """initialize with img_id."""
         self.img_id = img_id
+        self.user_id = user_id
         self.t1 = rel[0]
         self.t2 = rel[1]
         self.t3 = rel[2]
@@ -225,3 +233,39 @@ class Game(db.Model):
 
     def __repr__(self):
         return "<Game: {}>".format(self.id)
+
+class User(db.Model):
+    """This class defines the users table """
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(256), nullable=False, unique=True)
+    name = db.Column(db.String(256))
+    email = db.Column(db.String(256), nullable=False, unique=True)
+    password = db.Column(db.String(256), nullable=False)
+    image = db.relationship('Image', lazy='dynamic')
+    games = db.relationship('Game', lazy='dynamic')
+
+    def __init__(self, email, username, name, password):
+        """Initialize the user with an email and a password."""
+        self.email = email
+        self.password = password
+        self.username = username
+        self.name = name
+
+    def save(self):
+        """Save a user to the database.
+        This includes creating a new user and editing one.
+        """
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return User.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def __repr__(self):
+        return "<User: {}>".format(self.id)

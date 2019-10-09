@@ -14,7 +14,7 @@ db = SQLAlchemy()
 
 
 def create_app(config_name):
-    from app.models import Image, PieceBeginner, Tile, PieceIntermediate, PieceHard, Game
+    from app.models import Image, PieceBeginner, Tile, PieceIntermediate, PieceHard, Game, User
     app = FlaskAPI(__name__, instance_relative_config=True)
     CORS(app, supports_credentials=True)
     app.config.from_object(app_config[config_name])
@@ -26,6 +26,55 @@ def create_app(config_name):
     def api():
         endpoints=open("endpoints.json","r")
         return endpoints.read()
+
+    @app.route('/users/', methods=['POST', 'GET'])
+    def users_handler():
+        if request.method == "POST":
+            username = str(request.data.get('username', ''))
+            email = str(request.data.get('email', ''))
+            name = str(request.data.get('name', ''))
+            password = str(request.data.get('password', ''))
+            if username and email and password:
+                user = User(email, username, name, password)
+                user.save()
+                response = jsonify({
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'name': user.name,
+                    'password': user.password
+                })
+                response.status_code = 201
+                return response
+        else:
+            # GET
+            users = User.get_all()
+            results = []
+            for user in users:
+                obj = {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'name': user.name,
+                    'password': user.password
+                }
+                results.append(obj)
+            response = jsonify(results)
+            response.status_code = 200
+            return response
+    @app.route('/users/<int:id>', methods=['GET'])
+    def user_handler(id, **kwargs):
+        user = User.query.filter_by(id=id).first()
+        result = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'name': user.name,
+            'password': user.password
+        }
+        response = jsonify(result)
+        response.status_code = 200
+        return response
 
     @app.route('/images/', methods=['POST', 'GET'])
     def images_handler():
