@@ -14,11 +14,20 @@
     ]
   },
   "POST /images/": {
-    "description": "posts an image",
+    "description": "posts an image, and crops it to given difficulty: 4, 9 or 16",
     "example body": {
-      "url": "https://i.imgur.com/xJW1L6z.jpg"
+      "url": "https://i.imgur.com/xJW1L6z.jpg",
+      "diff": "4"
     },
     "example response": {
+      "beginner_pieces": [
+        {
+          "url": "https://i.imgur.com/G1My5qP.jpeg",
+          "value": 1
+        }
+      ],
+      "intermediate_pieces": [],
+      "hard_pieces": [],
       "date_created": "Thu, 03 Oct 2019 11:20:14 GMT",
       "date_modified": "Thu, 03 Oct 2019 11:20:14 GMT",
       "id": 1,
@@ -41,25 +50,6 @@
       "id": 1,
       "url": "https://i.imgur.com/jrMxxFY.jpg"
     }
-  },
-  "POST /images/:img_id/beginner-pieces": {
-    "description": "posts a piece of an image to that image, where value tells you which piece it is from left -> right, top-> bottom.",
-    "example body": {
-      "value": 1,
-      "url": "https://i.imgur.com/G1My5qP.jpeg"
-    },
-    "example response": {
-      "id": 10,
-      "img_id": 1,
-      "url": "https://i.imgur.com/xJW1L6z.jpg",
-      "value": 5
-    }
-  },
-  "POST /images/:img_id/intermediate-pieces": {
-    "description": "As above, but for 3x3 game"
-  },
-  "POST /images/:img_id/hard-pieces": {
-    "description": "As above, but for 4x4 game"
   },
   "GET /tiles/": {
     "description": "serves an array of all tile pieces",
@@ -100,9 +90,10 @@
     ]
   },
   "POST /games/": {
-    "description": "posts a new game",
+    "description": "posts a new game and returns image-tile relation and winning image",
     "example body": {
-      "img_id": "1"
+      "img_id": "1",
+      "diff": "4"
     },
     "example response": {
       "date_completed": "Mon, 07 Oct 2019 15:28:10 GMT",

@@ -31,13 +31,23 @@ def create_app(config_name):
     def images_handler():
         if request.method == "POST":
             url = str(request.data.get('url', ''))
-            if url:
+            diff = int(request.data.get('diff', ''))
+            if url and diff:
                 image = Image(url=url)
                 image.save()
-                pieces = cropper(4, url)
-                for item in pieces:
-                    piece = PieceBeginner(img_id = image.id, value = item['value'], url=item['url'])
-                    piece.save()
+                pieces = cropper(diff, url)
+                if diff == 4:
+                    for item in pieces:
+                        piece = PieceBeginner(img_id = image.id, value = item['value'], url=item['url'])
+                        piece.save()
+                if diff == 9:
+                    for item in pieces:
+                        piece = PieceIntermediate(img_id = image.id, value = item['value'], url=item['url'])
+                        piece.save()
+                if diff == 16:
+                    for item in pieces:
+                        piece = PieceHard(img_id = image.id, value = item['value'], url=item['url'])
+                        piece.save()
                 beginner_pieces = PieceBeginner.query.filter_by(img_id=image.id)
                 bpieces = []
                 for piece in beginner_pieces:
@@ -46,12 +56,30 @@ def create_app(config_name):
                         'url': piece.url
                     }
                     bpieces.append(obj)
+                intermediate_pieces = PieceIntermediate.query.filter_by(img_id=image.id)
+                ipieces = []
+                for piece in intermediate_pieces:
+                    obj = {
+                        'value': piece.value,
+                        'url': piece.url
+                    }
+                    ipieces.append(obj)
+                hard_pieces = PieceHard.query.filter_by(img_id=image.id)
+                hpieces = []
+                for piece in hard_pieces:
+                    obj = {
+                        'value': piece.value,
+                        'url': piece.url
+                    }
+                    hpieces.append(obj)
                 response = jsonify({
                     'id': image.id,
                     'url': image.url,
                     'date_created': image.date_created,
                     'date_modified': image.date_modified,
                     'beginner_pieces': bpieces,
+                    'intermediate_pieces': ipieces,
+                    'hard_pieces': hpieces
                 })
                 response.status_code = 201
                 return response
@@ -134,50 +162,6 @@ def create_app(config_name):
             response.status_code = 200
             return response
 
-    @app.route('/images/<int:id>/intermediate-pieces', methods=['POST'])
-    def add_intermediate_pieces(id, **kwargs):
-     # retrieve a image using it's ID
-        image = Image.query.filter_by(id=id).first()
-        if not image:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
-
-        elif request.method == 'POST':
-            value = str(request.data.get('value', ''))
-            url = str(request.data.get('url', ''))
-            piece = PieceIntermediate(img_id = id, value = value, url=url)
-            piece.save()
-            response = jsonify({
-                'id': piece.id,
-                'img_id': piece.img_id,
-                'value': piece.value,
-                'url': piece.url,
-            })
-            response.status_code = 201
-            return response
-    
-    @app.route('/images/<int:id>/hard-pieces', methods=['POST'])
-    def add_hard_pieces(id, **kwargs):
-     # retrieve a image using it's ID
-        image = Image.query.filter_by(id=id).first()
-        if not image:
-            # Raise an HTTPException with a 404 not found status code
-            abort(404)
-
-        elif request.method == 'POST':
-            value = str(request.data.get('value', ''))
-            url = str(request.data.get('url', ''))
-            piece = PieceHard(img_id = id, value = value, url=url)
-            piece.save()
-            response = jsonify({
-                'id': piece.id,
-                'img_id': piece.img_id,
-                'value': piece.value,
-                'url': piece.url,
-            })
-            response.status_code = 201
-            return response
-            
     @app.route('/tiles/', methods=['POST', 'GET', 'PUT'])
     def tiles_handler():
         if request.method == "POST":
@@ -222,15 +206,49 @@ def create_app(config_name):
     def game_handler():
         if request.method == "POST":
             img_id = str(request.data.get('img_id', ''))
-            if img_id:
-                obj = randomiser(4)
-                one = obj[0]
-                two = obj[1]
-                three = obj[2]
-                four = obj[3]
+            diff = int(request.data.get('diff', ''))
+            if img_id and diff:
+                obj = randomiser(diff)
+                rel = []
+                for num in range(0,diff):
+                    num = num +1 
+                    rel.append(obj[num-1])
                 win_img = obj['url']
-                game = Game(img_id, one, two, three, four, win_img)
+                game = Game(img_id, rel, win_img)
                 game.save()
+                relation = {}
+                if game.t1:
+                    relation['1'] = game.t1
+                if game.t2:
+                    relation['2'] = game.t2
+                if game.t3:
+                    relation['3'] = game.t3
+                if game.t4:
+                    relation['4'] = game.t4
+                if game.t5:
+                    relation['5'] = game.t5
+                if game.t6:
+                    relation['6'] = game.t6
+                if game.t7:
+                    relation['7'] = game.t7
+                if game.t8:
+                    relation['8'] = game.t8
+                if game.t9:
+                    relation['9'] = game.t9
+                if game.t10:
+                    relation['10'] = game.t10
+                if game.t11:
+                    relation['11'] = game.t11
+                if game.t12:
+                    relation['12'] = game.t12
+                if game.t13:
+                    relation['13'] = game.t13
+                if game.t14:
+                    relation['14'] = game.t14
+                if game.t15:
+                    relation['15'] = game.t15
+                if game.t16:
+                    relation['16'] = game.t16
                 score = 'null'
                 response = jsonify({
                     'id': game.id,
@@ -238,12 +256,7 @@ def create_app(config_name):
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
                     'score': 'null',
-                    'relation':{
-                        '1': game.one,
-                        '2' : game.two,
-                        '3': game.three,
-                        '4': game.four,
-                    },
+                    'relation':relation,
                     'win_img': game.win_img
                 })
                 response.status_code = 201
@@ -257,18 +270,46 @@ def create_app(config_name):
                     score = game.score.strftime("%H:%M:%S")
                 else:
                     score = 'null'
+                relation = {}
+                if game.t1:
+                    relation['1'] = game.t1
+                if game.t2:
+                    relation['2'] = game.t2
+                if game.t3:
+                    relation['3'] = game.t3
+                if game.t4:
+                    relation['4'] = game.t4
+                if game.t5:
+                    relation['5'] = game.t5
+                if game.t6:
+                    relation['6'] = game.t6
+                if game.t7:
+                    relation['7'] = game.t7
+                if game.t8:
+                    relation['8'] = game.t8
+                if game.t9:
+                    relation['9'] = game.t9
+                if game.t10:
+                    relation['10'] = game.t10
+                if game.t11:
+                    relation['11'] = game.t11
+                if game.t12:
+                    relation['12'] = game.t12
+                if game.t13:
+                    relation['13'] = game.t13
+                if game.t14:
+                    relation['14'] = game.t14
+                if game.t15:
+                    relation['15'] = game.t15
+                if game.t16:
+                    relation['16'] = game.t16
                 obj = {
                     'id': game.id,
                     'img_id': game.img_id,
                     'date_created': game.date_created,
                     'date_completed': game.date_completed,
                     'score': score,
-                    'relation':{
-                        '1': game.one,
-                        '2' : game.two,
-                        '3': game.three,
-                        '4': game.four,
-                    },
+                    'relation':relation,
                     'win_img': game.win_img
                 }
                 results.append(obj)
@@ -283,18 +324,46 @@ def create_app(config_name):
             game.score = datetime.now() - game.date_created
             game.save()
             score = game.score.strftime("%H:%M:%S")
+            relation = {}
+            if game.t1:
+                relation['1'] = game.t1
+            if game.t2:
+                relation['2'] = game.t2
+            if game.t3:
+                relation['3'] = game.t3
+            if game.t4:
+                relation['4'] = game.t4
+            if game.t5:
+                relation['5'] = game.t5
+            if game.t6:
+                relation['6'] = game.t6
+            if game.t7:
+                relation['7'] = game.t7
+            if game.t8:
+                relation['8'] = game.t8
+            if game.t9:
+                relation['9'] = game.t9
+            if game.t10:
+                relation['10'] = game.t10
+            if game.t11:
+                relation['11'] = game.t11
+            if game.t12:
+                relation['12'] = game.t12
+            if game.t13:
+                relation['13'] = game.t13
+            if game.t14:
+                relation['14'] = game.t14
+            if game.t15:
+                relation['15'] = game.t15
+            if game.t16:
+                relation['16'] = game.t16
             response = jsonify({
                 'id': game.id,
                 'img_id': game.img_id,
                 'date_created': game.date_created,
                 'date_completed': game.date_completed,
                 'score': score,
-                'relation':{
-                    '1': game.one,
-                    '2' : game.two,
-                    '3': game.three,
-                    '4': game.four,
-                },
+                'relation':relation,
                 'win_img': game.win_img
             })
             response.status_code = 200
@@ -305,18 +374,46 @@ def create_app(config_name):
                 score = game.score.strftime("%H:%M:%S")
             else:
                 score = 'null'
+            relation = {}
+            if game.t1:
+                relation['1'] = game.t1
+            if game.t2:
+                relation['2'] = game.t2
+            if game.t3:
+                relation['3'] = game.t3
+            if game.t4:
+                relation['4'] = game.t4
+            if game.t5:
+                relation['5'] = game.t5
+            if game.t6:
+                relation['6'] = game.t6
+            if game.t7:
+                relation['7'] = game.t7
+            if game.t8:
+                relation['8'] = game.t8
+            if game.t9:
+                relation['9'] = game.t9
+            if game.t10:
+                relation['10'] = game.t10
+            if game.t11:
+                relation['11'] = game.t11
+            if game.t12:
+                relation['12'] = game.t12
+            if game.t13:
+                relation['13'] = game.t13
+            if game.t14:
+                relation['14'] = game.t14
+            if game.t15:
+                relation['15'] = game.t15
+            if game.t16:
+                relation['16'] = game.t16
             response = jsonify({
                 'id': game.id,
                 'img_id': game.img_id,
                 'date_created': game.date_created,
                 'date_completed': game.date_completed,
-                'score':score,
-                'relation':{
-                    '1': game.one,
-                    '2' : game.two,
-                    '3': game.three,
-                    '4': game.four,
-                },
+                'score': score,
+                'relation': relation,
                 'win_img': game.win_img
             })
             response.status_code = 200

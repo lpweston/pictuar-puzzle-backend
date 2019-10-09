@@ -170,19 +170,45 @@ class Game(db.Model):
     date_completed = db.Column(db.DateTime,
         onupdate=db.func.current_timestamp())
     score = db.Column(db.Time)
-    one = db.Column(db.Integer)
-    two = db.Column(db.Integer)
-    three = db.Column(db.Integer)
-    four = db.Column(db.Integer)
+    t1 = db.Column(db.Integer)
+    t2 = db.Column(db.Integer)
+    t3 = db.Column(db.Integer)
+    t4 = db.Column(db.Integer)
+    t5 = db.Column(db.Integer)
+    t6 = db.Column(db.Integer)
+    t7 = db.Column(db.Integer)
+    t8 = db.Column(db.Integer)
+    t9 = db.Column(db.Integer)
+    t10 = db.Column(db.Integer)
+    t11 = db.Column(db.Integer)
+    t12 = db.Column(db.Integer)
+    t13 = db.Column(db.Integer)
+    t14 = db.Column(db.Integer)
+    t15 = db.Column(db.Integer)
+    t16 = db.Column(db.Integer)
     win_img = db.Column(db.String(255))
 
-    def __init__(self, img_id, one, two, three, four, win_img):
+    def __init__(self, img_id, rel, win_img):
         """initialize with img_id."""
         self.img_id = img_id
-        self.one = one
-        self.two = two
-        self.three = three
-        self.four= four
+        self.t1 = rel[0]
+        self.t2 = rel[1]
+        self.t3 = rel[2]
+        self.t4 = rel[3]
+        if len(rel)>4:
+            self.t5 = rel[4]
+            self.t6 = rel[5]
+            self.t7 = rel[6]
+            self.t8 = rel[7]
+            self.t9 = rel[8]
+        if len(rel)>9:
+            self.t10 = rel[9]
+            self.t11 = rel[10]
+            self.t12 = rel[11]
+            self.t13 = rel[12]
+            self.t14 = rel[13]
+            self.t15 = rel[14]
+            self.t16 = rel[15]
         self.win_img = win_img
 
     def save(self):
