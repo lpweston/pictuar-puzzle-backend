@@ -81,10 +81,11 @@ def create_app(config_name):
         if request.method == "POST":
             url = str(request.data.get('url', ''))
             diff = int(request.data.get('diff', ''))
+            user_id = int(request.data.get('user_id', ''))
             if url and diff:
                 image = Image(url=url)
                 image.save()
-                pieces = cropper(diff, url)
+                pieces = cropper(diff, url, user_id)
                 if diff == 4:
                     for item in pieces:
                         piece = PieceBeginner(img_id = image.id, value = item['value'], url=item['url'])
@@ -124,6 +125,7 @@ def create_app(config_name):
                 response = jsonify({
                     'id': image.id,
                     'url': image.url,
+                    'user_id': image.user_id,
                     'date_created': image.date_created,
                     'date_modified': image.date_modified,
                     'beginner_pieces': bpieces,
@@ -141,7 +143,8 @@ def create_app(config_name):
                     'id': image.id,
                     'url': image.url,
                     'date_created': image.date_created,
-                    'date_modified': image.date_modified
+                    'date_modified': image.date_modified,
+                    'user_id': image.user_id
                 }
                 results.append(obj)
             response = jsonify(results)
@@ -205,6 +208,7 @@ def create_app(config_name):
                 'beginner_pieces': bpieces,
                 'intermediate_pieces': ipieces,
                 'hard_pieces': hpieces,
+                'user_id': image.user_id,
                 'date_created': image.date_created,
                 'date_modified': image.date_modified
             })

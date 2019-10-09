@@ -57,7 +57,8 @@
     "description": "posts an image, and crops it to given difficulty: 4, 9 or 16",
     "example body": {
       "url": "https://i.imgur.com/xJW1L6z.jpg",
-      "diff": "4"
+      "diff": "4",
+      "user_id": "1"
     },
     "example response": {
       "beginner_pieces": [
