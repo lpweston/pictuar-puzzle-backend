@@ -22,6 +22,24 @@ class UserTestCase(unittest.TestCase):
         self.assertIn('bob@email.com', str(res.data))
         self.assertIn('password1', str(res.data))
 
+    def test_api_can_get_all_users(self):
+        """Test API can get users (GET request)."""
+        res = self.client().post('/users/', data=self.user)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().get('/users/')
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('bob1', str(res.data))
+
+    def test_api_can_get_user_by_id(self):
+        """Test API can get a single user by using it's id."""
+        rv = self.client().post('/users/', data=self.user)
+        self.assertEqual(rv.status_code, 201)
+        result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
+        result = self.client().get(
+            '/users/{}'.format(result_in_json['id']))
+        self.assertEqual(result.status_code, 200)
+        self.assertIn('bob1', str(result.data))
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
